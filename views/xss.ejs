@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XSS Demo</title>
+</head>
+
+<body>
+    <h1>Demonstracija cross-site scriptinga</h1>
+
+    <h2>Objavi komentar</h2>
+    <form action="/ranjivosti/xss/add" method="POST">
+        <label for="komentar">Komentar</label>
+        <input type="text" id="komentar" name="komentar" required />
+        <input type="hidden" name="enabled" value="<%= vulnerable ? 'true' : 'false' %>">
+        <button type="submit">Objavi</button>
+    </form>
+
+    <label for="xss-toggle">Uključi ranjivost</label>
+    <input type="checkbox" id="xss-toggle" <%=vulnerable ? "checked" : "" %>
+    >
+
+    <h2>Objavljeni komentari</h2>
+
+    <% if (comments.length===0){ %>
+        <p> Trenutno nema objavljenih komentara</p>
+        <% } else { %>
+            <table cellpadding="8">
+                <thead>
+                    <tr>
+                        <th>Komentar</th>
+                        <th>Objavljeno</th>
+                        <th>Upravljaj</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% comments.forEach(comment=> { %>
+                        <tr>
+                            <td>
+                                <% if (vulnerable) { %>
+                                    <%- comment.content %>
+                                        <% } else { %>
+                                            <%= comment.content %>
+                                                <% } %>
+                            </td>
+                            <td>
+                                <%= new Date(comment.created_at).toLocaleString("hr-HR") %>
+                            </td>
+                            <td>
+                                <form action="/ranjivosti/xss/<%= comment.comment_id %>/delete" method="POST">
+                                    <input type="hidden" name="enabled" value="<%= vulnerable ? 'true' : 'false' %>">
+                                    <button type="submit" class="btn">Izbriši</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+            <% } %>
+
+                <a href="/" class="btn">Početna stranica</a>
+
+                <script>
+                    const checkbox = document.getElementById("xss-toggle");
+
+                    checkbox.addEventListener("change", () => {
+                        window.location.href = checkbox.checked
+                            ? "/ranjivosti/xss?enabled=true"
+                            : "/ranjivosti/xss?enabled=false";
+                    });
+                </script>
+</body>
+
+</html>

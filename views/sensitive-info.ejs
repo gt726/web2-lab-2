@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensitive info Demo</title>
+</head>
+
+<body>
+    <h1>Demonstracija nepravilne pohrane osjetljivih podataka</h1>
+
+    <h2>Registriraj korisnika</h2>
+
+    <form action="/ranjivosti/sensitive-info/add" method="POST">
+        <label for="email">Email</label>
+        <input type="text" id="email" name="email" required />
+
+        <label for="password">Lozinka</label>
+        <input type="password" id="password" name="password" required />
+
+        <label for="hash-toggle">Uključi ranjivost</label>
+        <input type="checkbox" id="hash-toggle" name="vulnerable" value="true">
+
+        <button type="submit">Kreiraj</button>
+    </form>
+
+    <h2>Popis korisnika</h2>
+
+
+    <% if (users.length===0){ %>
+        <p> Trenutno nema postojećih korisnika</p>
+        <% } else { %>
+            <table cellpadding="8">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Lozinka</th>
+                        <th>Kreiran</th>
+                        <th>Upravljaj</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% users.forEach(user=> { %>
+                        <tr>
+                            <td>
+                                <%= user.email %>
+                            </td>
+                            <td>
+                                <%= user.password %>
+                            </td>
+                            <td>
+                                <%= new Date(user.created_at).toLocaleString("hr-HR") %>
+                            </td>
+                            <td>
+                                <form action="/ranjivosti/sensitive-info/<%= user.user_id %>/delete" method="POST">
+                                    <button type="submit" class="btn">Izbriši</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+            <% } %>
+
+
+                <a href="/">Početna stranica</a>
+
+</body>
+
+</html>
