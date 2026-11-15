@@ -4,23 +4,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
     <title>Sensitive info Demo</title>
 </head>
 
 <body>
     <h1>Demonstracija nepravilne pohrane osjetljivih podataka</h1>
 
+    <p>Unesite potrebne podatke za kreiranje novog korisnika i odaberite želite li uključiti ranjivost.</p>
+    <p>Ovisno o odabiru, lozinka će se pohraniti u običnom tekstualnom obliku (plaintext) ili će prije pohrane biti
+        hashirana.</p>
+
     <h2>Registriraj korisnika</h2>
 
     <form action="/ranjivosti/sensitive-info/add" method="POST">
         <label for="email">Email</label>
-        <input type="text" id="email" name="email" required />
+        <input type="email" id="email" name="email" required />
 
         <label for="password">Lozinka</label>
         <input type="password" id="password" name="password" required />
 
-        <label for="hash-toggle">Uključi ranjivost</label>
-        <input type="checkbox" id="hash-toggle" name="vulnerable" value="true">
+        <div class="vuln-toggle">
+            <strong>
+                <label for="hash-toggle">Uključi ranjivost</label>
+            </strong>
+            <input type="checkbox" id="hash-toggle" name="vulnerable" value="true">
+        </div>
 
         <button type="submit">Kreiraj</button>
     </form>
@@ -54,7 +63,7 @@
                             </td>
                             <td>
                                 <form action="/ranjivosti/sensitive-info/<%= user.user_id %>/delete" method="POST">
-                                    <button type="submit" class="btn">Izbriši</button>
+                                    <button type="submit" class="del-btn">Izbriši</button>
                                 </form>
                             </td>
                         </tr>
@@ -64,7 +73,7 @@
             <% } %>
 
 
-                <a href="/">Početna stranica</a>
+                <a href="/" class="btn">Početna stranica</a>
 
 </body>
 

@@ -4,23 +4,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
     <title>XSS Demo</title>
 </head>
 
 <body>
     <h1>Demonstracija cross-site scriptinga</h1>
 
+    <p>Unesite komentar u predviđeno polje i objavite ga.</p>
+    <p>Ovisno o tome je li ranjivost uključena ili isključena, komentar će se prikazati kao HTML sadržaj ili kao običan
+        tekst (plain text).</p>
+
     <h2>Objavi komentar</h2>
+
     <form action="/ranjivosti/xss/add" method="POST">
         <label for="komentar">Komentar</label>
         <input type="text" id="komentar" name="komentar" required />
+
         <input type="hidden" name="enabled" value="<%= vulnerable ? 'true' : 'false' %>">
         <button type="submit">Objavi</button>
     </form>
 
-    <label for="xss-toggle">Uključi ranjivost</label>
-    <input type="checkbox" id="xss-toggle" <%=vulnerable ? "checked" : "" %>
-    >
+    <div class="vuln-toggle">
+        <strong>
+            <label for="xss-toggle">Uključi ranjivost</label>
+        </strong>
+        <input type="checkbox" id="xss-toggle" <%=vulnerable ? "checked" : "" %>
+        >
+    </div>
 
     <h2>Objavljeni komentari</h2>
 
@@ -51,7 +62,7 @@
                             <td>
                                 <form action="/ranjivosti/xss/<%= comment.comment_id %>/delete" method="POST">
                                     <input type="hidden" name="enabled" value="<%= vulnerable ? 'true' : 'false' %>">
-                                    <button type="submit" class="btn">Izbriši</button>
+                                    <button type="submit" class="del-btn">Izbriši</button>
                                 </form>
                             </td>
                         </tr>

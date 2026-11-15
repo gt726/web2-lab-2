@@ -1,5 +1,6 @@
 const express = require("express");
 const pool = require("../db/pool");
+const bcrypt = require("bcrypt");
 
 const router = express.Router();
 
@@ -10,10 +11,8 @@ router.get("/", async (req, res) => {
             `SELECT * FROM users ORDER BY created_at DESC`,
         );
 
-        const vulnerable = req.query.enabled === "true";
         res.render("sensitive-info", {
             users: result.rows,
-            vulnerable: vulnerable,
         });
     } catch (error) {
         console.error("Dogodila se greška pri dohvaćanju korisnika:", error);
@@ -27,10 +26,19 @@ router.get("/", async (req, res) => {
 router.post("/add", async (req, res) => {
     try {
         const email = req.body.email;
-        const password = req.body.password;
+        const rawPassword = req.body.password;
+        const vulnerable = req.body.vulnerable === "true";
 
-        if (!email || !email.trim() || !password || !password.trim()) {
+        if (!email || !email.trim() || !rawPassword || !rawPassword.trim()) {
             return res.redirect("/ranjivosti/sensitive-info");
+        }
+
+        let password;
+
+        if (vulnerable) {
+            password = rawPassword;
+        } else {
+            password = await bcrypt.hash(rawPassword, 12);
         }
 
         await pool.query(
